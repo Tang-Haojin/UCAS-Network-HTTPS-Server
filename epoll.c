@@ -1,15 +1,12 @@
-#include <stddef.h>
-#include <sys/epoll.h>
-#include <stdio.h>
+#include "general.h"
 
-void epoll_add(int epfd, int fd) {
-  struct epoll_event ev;
+void epoll_add(int epfd, int fd, uint32_t parent_fd) {
+  struct my_epoll_event ev;
   ev.data.fd = fd;
+  ev.data.parent_fd = parent_fd;
   ev.events = EPOLLIN | EPOLLONESHOT;
 
-  if (epoll_ctl(epfd, EPOLL_CTL_ADD, fd, &ev) == -1) {
-    printf("epoll add error\n");
-  }
+  Assert(epoll_ctl(epfd, EPOLL_CTL_ADD, fd, (struct epoll_event *)&ev) != -1, "epoll add error");
 }
 
 void epoll_del(int epfd, int fd) {
@@ -18,11 +15,11 @@ void epoll_del(int epfd, int fd) {
   }
 }
 
-void epoll_mod(int epfd, int fd) {
-  struct epoll_event ev;
+void epoll_mod(int epfd, int fd, uint32_t parent_fd) {
+  struct my_epoll_event ev;
   ev.data.fd = fd;
+  ev.data.parent_fd = parent_fd;
   ev.events = EPOLLIN | EPOLLONESHOT;
-  if (epoll_ctl(epfd, EPOLL_CTL_MOD, fd, &ev) == -1) {
-    printf("epoll mod error\n");
-  }
+
+  Assert(epoll_ctl(epfd, EPOLL_CTL_MOD, fd, (struct epoll_event *)&ev) != -1, "epoll mod error");
 }

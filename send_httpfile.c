@@ -1,9 +1,3 @@
-#include <stddef.h>
-#include <string.h>
-#include <fcntl.h>
-#include <unistd.h>
-#include <stdio.h>
-#include <sys/socket.h>
 #include "general.h"
 
 int send_httpfile(int c, char *filename) {
@@ -22,8 +16,8 @@ int send_httpfile(int c, char *filename) {
 
   int size = lseek(fd, 0, SEEK_END);
   lseek(fd, 0, SEEK_SET);
-  char head_buff[512] = "HTTP/1.1 200 OK\r\n";
-  strcat(head_buff, "Server: SugarCake\r\n");
+  char head_buff[512] = "HTTP/1.1 200 OK\r\n"
+                        "Server: SugarCake\r\n";
   sprintf(head_buff + strlen(head_buff), "Content-Length: %d\r\n", size);
   strcat(head_buff, "\r\n");
   send(c, head_buff, strlen(head_buff), 0);

@@ -1,24 +1,19 @@
-#include <signal.h>
-#include <threads.h>
-#include <stdio.h>
-#include <sys/msg.h>
-#include <sys/epoll.h>
 #include "general.h"
 
 int msgid;
-int sockfd;
+int socket80fd;
+int socket443fd;
 int epfd;
 
 int main() {
+  Assert(sizeof(my_epoll_data_t) == sizeof(epoll_data_t), "size of epoll_data_t unusual");
   signal(SIGPIPE, SIG_IGN);
-  sockfd = socket_init();
-  if (sockfd == -1) {
-    return 0;
-  }
+
+  socket80fd = socket_init(80);
+  socket443fd = socket_init(443);
+
   msgid = msgget((key_t)1234, IPC_CREAT | 0600);
-  if (msgid == -1) {
-    return 0;
-  }
+  Assert(msgid != -1, "msgget error");
 
   thrd_t id[4];
   for (int i = 0; i < 4; i++) {
@@ -26,14 +21,13 @@ int main() {
   }
 
   epfd = epoll_create(MAXFD);
-  if (epfd == -1) {
-    printf("create epoll error\n");
-    return 0;
-  }
+  Assert(epfd != -1, "create epoll error");
 
-  epoll_add(epfd, sockfd);
+  epoll_add(epfd, socket80fd, 0);
+  epoll_add(epfd, socket443fd, 0);
 
   struct epoll_event evs[MAXFD];
+
   while (1) {
     int n = epoll_wait(epfd, evs, MAXFD, -1);
     if (n == -1) {

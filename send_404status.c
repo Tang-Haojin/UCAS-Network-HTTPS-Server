@@ -1,8 +1,3 @@
-#include <fcntl.h>
-#include <sys/socket.h>
-#include <unistd.h>
-#include <string.h>
-#include <stdio.h>
 #include "general.h"
 
 int send_404status(int c) {
@@ -15,7 +10,7 @@ int send_404status(int c) {
 
   int size = lseek(fd, 0, SEEK_END);
   lseek(fd, 0, SEEK_SET);
-  char head_buff[512] = {"HTTP/1.1 404 Not Found\r\n"};
+  char head_buff[512] = "HTTP/1.1 404 Not Found\r\n";
   strcat(head_buff, "Server: SugarCake\r\n");
   sprintf(head_buff + strlen(head_buff), "Content-Length: %d\r\n", size);
   strcat(head_buff, "\r\n");

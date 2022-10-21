@@ -1,6 +1,4 @@
-#include <stddef.h>
-#include <string.h>
-#include <stdio.h>
+#include "general.h"
 
 char *get_filename(char buff[]) {
   char *ptr = NULL;
