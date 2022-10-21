@@ -1,8 +1,8 @@
 #include "general.h"
 
-int send_httpfile(int c, char *filename) {
-  if (filename == NULL || c < 0) {
-    send(c, "err", 3, 0);
+int send_file(SSL *ssl, int socketfd, char *filename) {
+  if (filename == NULL || socketfd < 0) {
+    SSL_send(ssl, socketfd, "err", 3);
     return -1;
   }
 
@@ -10,7 +10,7 @@ int send_httpfile(int c, char *filename) {
   strcat(path, filename);
   int fd = open(path, O_RDONLY);
   if (fd == -1) {
-    send_404status(c);
+    send_404status(ssl, socketfd);
     return -1;
   }
 
@@ -20,13 +20,13 @@ int send_httpfile(int c, char *filename) {
                         "Server: SugarCake\r\n";
   sprintf(head_buff + strlen(head_buff), "Content-Length: %d\r\n", size);
   strcat(head_buff, "\r\n");
-  send(c, head_buff, strlen(head_buff), 0);
+  SSL_send(ssl, socketfd, head_buff, strlen(head_buff));
   printf("send file:\n%s\n", head_buff);
 
   int num = 0;
   char data[1024] = {};
   while ((num = read(fd, data, 1024)) > 0) {
-    send(c, data, num, 0);
+    SSL_send(ssl, socketfd, data, num);
   }
 
   close(fd);

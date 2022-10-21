@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -pthread
+CFLAGS = -pthread -lssl -lcrypto
 
 SRC = $(wildcard *.c)
 INCLUDE = include

@@ -4,10 +4,12 @@ int msgid;
 int socket80fd;
 int socket443fd;
 int epfd;
+SSL_CTX *ctx = NULL;
 
 int main() {
-  Assert(sizeof(my_epoll_data_t) == sizeof(epoll_data_t), "size of epoll_data_t unusual");
   signal(SIGPIPE, SIG_IGN);
+
+  initSSL(PATH "/.keys/cert.pem", PATH "/.keys/privkey.pem");
 
   socket80fd = socket_init(80);
   socket443fd = socket_init(443);
@@ -23,8 +25,8 @@ int main() {
   epfd = epoll_create(MAXFD);
   Assert(epfd != -1, "create epoll error");
 
-  epoll_add(epfd, socket80fd, 0);
-  epoll_add(epfd, socket443fd, 0);
+  epoll_add(socket80fd, 0, NULL);
+  epoll_add(socket443fd, 0, NULL);
 
   struct epoll_event evs[MAXFD];
 
@@ -36,9 +38,9 @@ int main() {
       struct mess m;
       m.type = 1;
       for (int i = 0; i < n; i++) {
-        m.c = evs[i].data.fd;
+        m.data = evs[i].data.ptr;
         if (evs[i].events & EPOLLIN) {
-          msgsnd(msgid, &m, sizeof(int), 0);
+          msgsnd(msgid, &m, sizeof(struct my_epoll_data *), 0);
         }
       }
     }

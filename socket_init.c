@@ -14,5 +14,9 @@ int socket_init(int port) {
   res = listen(socketfd, 5);
   Assert(res != -1, "listen error");
 
+  struct timeval timeout = { .tv_sec = 20, .tv_usec = 0 };
+
+  setsockopt(socketfd, SOL_SOCKET, SO_RCVTIMEO, (const void *)&timeout, sizeof(struct timeval));
+
   return socketfd;
 }
