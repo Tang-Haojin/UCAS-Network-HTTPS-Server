@@ -17,16 +17,16 @@ int main() {
   msgid = msgget((key_t)1234, IPC_CREAT | 0600);
   Assert(msgid != -1, "msgget error");
 
-  thrd_t id[4];
-  for (int i = 0; i < 4; i++) {
-    thrd_create(&id[i], thread_func, NULL);
-  }
-
   epfd = epoll_create(MAXFD);
   Assert(epfd != -1, "create epoll error");
 
   epoll_add(socket80fd, 0, NULL);
   epoll_add(socket443fd, 0, NULL);
+
+  thrd_t id[4];
+  for (int i = 0; i < 4; i++) {
+    thrd_create(&id[i], thread_func, NULL);
+  }
 
   struct epoll_event evs[MAXFD];
 
