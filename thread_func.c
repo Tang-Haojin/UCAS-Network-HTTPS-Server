@@ -1,6 +1,7 @@
 #include "general.h"
+#include <errno.h>
 
-static inline void close_connection(struct my_epoll_data *data) {
+void close_connection(struct my_epoll_data *data) {
   if (data->ssl) {
     SSL_shutdown(data->ssl);
     SSL_free(data->ssl);
@@ -15,10 +16,9 @@ int thread_func(void *args) {
     int socketfd = m.data->fd;
     int parentfd = m.data->parent_fd;
     if (socketfd == socket80fd || socketfd == socket443fd) {
-      struct sockaddr saddr;
-      socklen_t len;
-      int cli = accept(socketfd, &saddr, &len);
+      int cli = accept(socketfd, NULL, NULL);
       if (cli < 0) {
+        printf("error! errno = %d\n", errno);
         epoll_mod(m.data);
         continue;
       }
@@ -45,17 +45,8 @@ int thread_func(void *args) {
         continue;
       }
 
-      char *filename = get_filename(buff);
-      if (filename == NULL) {
-        send_404status(m.data->ssl, socketfd);
-        close_connection(m.data);
-        continue;
-      }
-      printf("filename: %s\n", filename);
-
-      if (send_file(m.data->ssl, socketfd, filename) == -1) {
-        close_connection(m.data);
-        printf("主动关闭连接\n");
+      struct request_fields request = get_request_fields(buff);
+      if (handle_request(&m, &request)) {
         continue;
       }
     }

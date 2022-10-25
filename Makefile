@@ -10,5 +10,4 @@ main: ${SRC}
 clean:
 	rm -rf main
 
-.PHONY:
-	clean
+.PHONY: clean

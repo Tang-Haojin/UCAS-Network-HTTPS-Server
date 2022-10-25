@@ -6,7 +6,7 @@ int socket_init(int port) {
   struct sockaddr_in saddr;
   saddr.sin_family = AF_INET;
   saddr.sin_port = htons(port);
-  saddr.sin_addr.s_addr = inet_addr("0.0.0.0");
+  saddr.sin_addr.s_addr = INADDR_ANY;
 
   int res = bind(socketfd, (struct sockaddr *)&saddr, sizeof(saddr));
   Assert(res != -1, "bind error");

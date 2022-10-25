@@ -39,6 +39,8 @@
 #define SSL_send(ssl, __fd, __buf, __n) \
   ((ssl) ? SSL_write(ssl, __buf, __n) : send(__fd, __buf, __n, 0))
 
+#define apply_all_request(f) f(Host); f(Range)
+
 typedef struct my_epoll_data {
   int fd;
   int parent_fd;
@@ -50,6 +52,11 @@ struct mess {
   my_epoll_data_t *data;
 };
 
+struct request_fields {
+  char *filename;
+  apply_all_request(char *);
+};
+
 extern int msgid;
 extern int socket80fd;
 extern int socket443fd;
@@ -58,12 +65,15 @@ extern SSL_CTX *ctx;
 
 void initSSL(const char *cacert, const char *key);
 int socket_init(int port);
+void close_connection(struct my_epoll_data *data);
 int thread_func(void *args);
 int send_file(SSL *ssl, int socketfd, char *filename);
+int send_301status(SSL *ssl, int socketfd, char *host, char *filename);
 int send_404status(SSL *ssl, int socketfd);
-char *get_filename(char buff[]);
+struct request_fields get_request_fields(char buff[]);
 struct my_epoll_data *epoll_add(int fd, int parent_fd, SSL *ssl);
 void epoll_del(struct my_epoll_data *data);
 void epoll_mod(struct my_epoll_data *data);
+int handle_request(struct mess *m, struct request_fields *request);
 
 #endif
