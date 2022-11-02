@@ -1,6 +1,6 @@
 #include "general.h"
 
-int send_301status(SSL *ssl, int socketfd, char *host, char *filename) {
+int send_301_status(SSL *ssl, int socketfd, char *host, char *filename) {
   char head_buff[512] = "HTTP/1.1 301 Moved Permanently\r\n"
                         "Server: SugarCake\r\n"
                         "Content-Length: 0\r\n";

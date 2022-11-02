@@ -41,6 +41,8 @@
 
 #define apply_all_request(f) f(Host); f(Range)
 
+char *strip_space(char *str);
+
 typedef struct my_epoll_data {
   int fd;
   int parent_fd;
@@ -68,8 +70,9 @@ int socket_init(int port);
 void close_connection(struct my_epoll_data *data);
 int thread_func(void *args);
 int send_file(SSL *ssl, int socketfd, char *filename);
-int send_301status(SSL *ssl, int socketfd, char *host, char *filename);
-int send_404status(SSL *ssl, int socketfd);
+int send_301_status(SSL *ssl, int socketfd, char *host, char *filename);
+int send_206_file(SSL *ssl, int socketfd, char *range, char *filename);
+int send_404_status(SSL *ssl, int socketfd);
 struct request_fields get_request_fields(char buff[]);
 struct my_epoll_data *epoll_add(int fd, int parent_fd, SSL *ssl);
 void epoll_del(struct my_epoll_data *data);

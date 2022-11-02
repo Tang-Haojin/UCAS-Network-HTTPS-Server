@@ -10,15 +10,16 @@ int send_file(SSL *ssl, int socketfd, char *filename) {
   strcat(path, filename);
   int fd = open(path, O_RDONLY);
   if (fd == -1) {
-    send_404status(ssl, socketfd);
+    send_404_status(ssl, socketfd);
     return -1;
   }
 
-  int size = lseek(fd, 0, SEEK_END);
+  long size = lseek(fd, 0, SEEK_END);
   lseek(fd, 0, SEEK_SET);
   char head_buff[512] = "HTTP/1.1 200 OK\r\n"
+                        "Accept-Ranges: bytes\r\n"
                         "Server: SugarCake\r\n";
-  sprintf(head_buff + strlen(head_buff), "Content-Length: %d\r\n", size);
+  sprintf(head_buff + strlen(head_buff), "Content-Length: %ld\r\n", size);
   strcat(head_buff, "\r\n");
   SSL_send(ssl, socketfd, head_buff, strlen(head_buff));
   printf("send file:\n%s\n", head_buff);
