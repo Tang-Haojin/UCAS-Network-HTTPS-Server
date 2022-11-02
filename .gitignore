@@ -2,5 +2,8 @@
 !*/
 !*.c
 !*.h
+!*.py
+!*.html
+!*.pem
 !Makefile
 !.gitignore

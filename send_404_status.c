@@ -15,6 +15,7 @@ int send_404_status(SSL *ssl, int socketfd) {
   sprintf(head_buff + strlen(head_buff), "Content-Length: %ld\r\n", size);
   strcat(head_buff, "\r\n");
   SSL_send(ssl, socketfd, head_buff, strlen(head_buff));
+  printf("send file:\n%s\n", head_buff);
 
   char data[1024] = {};
   int num = 0;

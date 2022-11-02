@@ -21,7 +21,7 @@
 #include <sys/time.h>
 
 #define MAXFD 4
-#define PATH "/home/mandelbrot/http_server"
+#define PATH "www"
 #define Assert(cond, ...) \
   do { \
     if (!(cond)) { \

@@ -9,7 +9,7 @@ SSL_CTX *ctx = NULL;
 int main() {
   signal(SIGPIPE, SIG_IGN);
 
-  initSSL(PATH "/.keys/cert.pem", PATH "/.keys/privkey.pem");
+  initSSL(".keys/cert.pem", ".keys/privkey.pem");
 
   socket80fd = socket_init(80);
   socket443fd = socket_init(443);

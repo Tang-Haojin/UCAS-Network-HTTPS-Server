@@ -1,8 +1,8 @@
 CC = gcc
 CFLAGS = -pthread -lssl -lcrypto
 
-SRC = $(wildcard *.c)
 INCLUDE = include
+SRC = $(wildcard *.c) $(wildcard ${INCLUDE}/*.h)
 
 main: ${SRC}
 	${CC} $^ ${CFLAGS} -I${INCLUDE} -o main
