@@ -15,13 +15,13 @@ struct request_fields get_request_fields(char buff[]) {
   char *ptr = NULL;
   char *s = strtok_r(buff, " ", &ptr);
   if (s == NULL) {
-    printf("请求报文错误\n");
+    printf("Request message error\n");
     return fields;
   }
-  printf("请求方法: %s\n", s);
+  printf("Request method: %s\n", s);
   s = strtok_r(NULL, " ", &ptr);
   if (s == NULL) {
-    printf("请求报文 无资源名字\n");
+    printf("Request message no resources name\n");
     return fields;
   }
   strtok_r(NULL, "\n", &ptr);

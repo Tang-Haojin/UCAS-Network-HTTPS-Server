@@ -47,6 +47,8 @@ int thread_func(void *args) {
 
       struct request_fields request = get_request_fields(buff);
       if (handle_request(&m, &request)) {
+        close_connection(m.data);
+        printf("active close\n");
         continue;
       }
     }
